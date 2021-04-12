@@ -10,7 +10,7 @@ import time
 from imutils.video import VideoStream
 import imagezmq
 
-sender = imagezmq.ImageSender(connect_to='tcp://192.168.0.140:5555') # 클라이언트 아이피: 5555(아마 default인거 같음)
+sender = imagezmq.ImageSender(connect_to='tcp://localhost:5555') # 클라이언트 아이피: 5555(아마 default인거 같음)
  
 rpi_name = socket.gethostname() # send RPi hostname with each image
 

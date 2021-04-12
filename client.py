@@ -7,13 +7,14 @@
 
 import imagezmq
 import cv2
+import os
 
 imageHub = imagezmq.ImageHub()
 
 while True:
     (rpiName, frame) = imageHub.recv_image()
     imageHub.send_reply(b'OK')
-    print("[INFO] receiving data from {}...".format(rpiName))
+    #print("[INFO] receiving data from {}...".format(rpiName))
     try:
         cv2.imshow('video', frame)
         
@@ -21,4 +22,6 @@ while True:
             break
     except:
         pass
+
+os.system('sh kill_server.sh')
 

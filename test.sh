@@ -8,7 +8,7 @@ ARR=$(python3 get_ip.py)
 #$ARR = 42
 echo 'local_ip : ' $ARR
 
-USER=pi
+USER=ubuntu
 PW=1234
 FILE1=/home/perth/Desktop/personal_project/raspberry_cctv/pi_server.py
 #FOLDER1=/home/pi/cctv_test
@@ -20,32 +20,29 @@ SAVE_DIR=/home/pi/cctv_test
 
 # you should be install expect
 # sudo apt install expect
-IP=192.168.0.42
+IP=192.168.0.153
 echo $IP
 
 expect<<EOF
   set timeout 2
-  spawn ssh $USER@$IP "mkdir $SAVE_DIR"
+  spawn ssh server1 "scp -o StrictHostKeyChecking=no $USER@$IP:~/tst/tst.py perth@192.168.0.153:~/Desktop/personal_project/raspberry_cctv/"
   expect "password:"
   send "$PW\r"
   expect eof
 EOF
 
-expect<<EOF
-  set timeout 2
-  spawn scp -o StrictHostKeyChecking=no $FILE1 $USER@$IP:$SAVE_DIR
-  expect "password:"
-  send "$PW\r"
-  expect eof
-EOF
+# expect<<EOF
+#   set timeout 2
+#   spawn scp -o StrictHostKeyChecking=no $FILE1 $USER@$IP:$SAVE_DIR
+#   expect "password:"
+#   send "$PW\r"
+#   expect eof
+# EOF
 
-expect<<EOF
-  set timeout 1
-  spawn ssh $USER@$IP "python3 $SAVE_DIR/pi_server.py -i " $ARR
-  expect "password"
-  send "$PW\r"
-  expect eof
-EOF
-
-python3 client.py
-#done
+# expect<<EOF
+#   set timeout 1
+#   spawn ssh $USER@$IP "python3 $SAVE_DIR/pi_server.py -i " $ARR
+#   expect "password"
+#   send "$PW\r"
+#   expect eof
+# EOF
