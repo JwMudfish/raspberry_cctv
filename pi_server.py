@@ -7,19 +7,46 @@ import imagezmq
 import cv2
 import os
 import argparse
+from subprocess import PIPE, Popen
 
+# def get_devices_list():
+#     devices_list = []
+
+#     result = os.popen('v4l2-ctl --list-devices').read()
+#     result_lists = result.split("\n\n")
+#     for result_list in result_lists:
+#         if result_list != '':
+#             result_list_2 = result_list.split('\n\t')
+#             devices_list.append(result_list_2[1][-1])
+#     print(devices_list)
+#     return devices_list
 
 def get_devices_list():
-    devices_list = []
+    camera_list = {}
+    splited = [] # output : ['/dev/video0']c
+    get_all_device_list = Popen(["v4l2-ctl --list-devices"], shell=True, stdout=PIPE, stderr=PIPE, encoding='utf-8')
+    stdout, stderr = get_all_device_list.communicate()
+    get_all_device_list = stdout.split('\n\n')
+    for i in get_all_device_list:
 
-    result = os.popen('v4l2-ctl --list-devices').read()
-    result_lists = result.split("\n\n")
-    for result_list in result_lists:
-        if result_list != '':
-            result_list_2 = result_list.split('\n\t')
-            devices_list.append(result_list_2[1][-1])
-    print(devices_list)
-    return devices_list
+        if "bcm2835-codec-decode" in i or "bcm2835-isp" in i:
+            continue
+        if "bcm2835-isp" in i:
+            continue
+
+        if i != '':
+            item = i.split('\n\t')
+            #splited.append(item[1])
+            splited.append(item[1])
+
+    for i in splited:
+        if i != '':
+            tmp = (f"udevadm info -a -n {i} | grep 'looking at device'")
+            loc = os.popen(tmp).read().split(':1.0')[0][-1]
+            camera_list[loc] = i
+    #return camera_list
+    print('splited : ', splited)
+    return splited 
 
 def get_ip():
    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) #3 
@@ -50,11 +77,11 @@ active_cam = sorted(list(set(active_cam)))
 print(f'현재 활성화 되어있는 카메라는 {active_cam} 입니다.')
 
 #first camera src
-cap_1 = cv2.VideoCapture(int(active_cam[0]))
+cap_1 = cv2.VideoCapture(int(active_cam[0][-1]))
 # set the format into MJPG in the FourCC format 
 cap_1.set(cv2.CAP_PROP_FOURCC,cv2.VideoWriter_fourcc('M','J','P','G'))
 #same for camera 2
-cap_2 = cv2.VideoCapture(int(active_cam[1]))
+cap_2 = cv2.VideoCapture(int(active_cam[1][-1]))
 cap_2.set(cv2.CAP_PROP_FOURCC,cv2.VideoWriter_fourcc('M','J','P','G'))
 
 
@@ -70,9 +97,6 @@ print("start ..")
 
 while True:  # send images as stream until Ctrl-C
 
-   '''
-      라즈베리에서 카메라 읽어서 클라이언트(노트북)에게 계속 쏴주는 로직
-   '''
    ret, frame1 = cap_1.read()
    ret, frame2 = cap_2.read()
    #image_1 = picam_1.read()
