@@ -20,7 +20,9 @@ SAVE_DIR=/home/pi/cctv_test
 
 # you should be install expect
 # sudo apt install expect
-IP=192.168.0.42
+read -p '라즈베리 IP를 입력하시오 : ' IP
+#echo "<${last_name}> 성입니다."
+#IP=192.168.0.42
 echo $IP
 
 expect<<EOF
