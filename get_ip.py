@@ -5,7 +5,7 @@ import socket
 
 
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
-import config
+#import config
 
 # check master ip
 s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) #3 

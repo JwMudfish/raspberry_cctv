@@ -35,6 +35,15 @@ EOF
 
 echo '폴더 생성 완료'
 
+
+expect<<EOF
+  set timeout 2
+  spawn ssh $USER@$IP "pkill -f cam.py -9"
+  expect "password:"
+  send "$PW\r"
+  expect eof
+EOF
+
 expect<<EOF
   set timeout 2
   spawn scp -o StrictHostKeyChecking=no $FILE1 $USER@$IP:$SAVE_DIR
