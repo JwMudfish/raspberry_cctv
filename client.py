@@ -23,5 +23,5 @@ while True:
     except:
         pass
 
-os.system('sh kill_server.sh')
+#os.system('sh kill_server.sh')
 

@@ -21,7 +21,7 @@ SAVE_DIR=/home/pi/cctv_test
 # you should be install expect
 # sudo apt install expect
 read -p '라즈베리 IP를 입력하시오 (ex> 192.168.0.42): ' IP
-#echo "<${last_name}> 성입니다."
+
 #IP=192.168.0.42
 echo $IP
 
@@ -65,4 +65,14 @@ EOF
 echo 'pi_server.py 실행 완료'
 
 python3 client.py
+
+echo '서버 끄는 중 -----------------------------------------------!'
+
+expect<<EOF
+  set timeout 1
+  spawn ssh $USER@$IP "pkill -f pi_server.py -9"
+  expect "password"
+  send "$PW\r"
+  expect eof
+EOF
 #done
